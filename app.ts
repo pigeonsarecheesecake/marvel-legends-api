@@ -1,30 +1,36 @@
-// dotenv
 import 'dotenv/config'
-
-// Action figure schema
 import actionFigureModel from './models/actionFigure'
-// const actionFigureModel = require('./models/actionFigure')
-
-// Import express
 import express from 'express'
-const app = express()
-
-// import mongoose
 import {connect} from 'mongoose'
 
-// port
+const app = express()
 const port = 3000
 
 // Middlewares
-// Converts payload to json
 app.use(express.json())
+// Get figures by name
+import figure from './routes/figure'
+app.use('/figure',figure)
 
-// Querying
-app.get('/', async(req,res)=>{
+// Get figures by series
+import series from './routes/series'
+app.use('/series',series)
+
+// Route to get all action figures
+app.get('/all', async(req,res)=>{
     try{
-        const figures = await actionFigureModel.find({name:"Iron Man"})
+        const figures = await actionFigureModel.find()
         res.json(figures)
-        console.log(figures)
+    }catch(err){
+        res.status(500).json({error:'Failed'})
+    }
+})
+
+// Get
+app.get('/character/:character', async(req,res)=>{
+    try{
+        const figures = await actionFigureModel.find({character:req.params.character})
+        res.json(figures)
     }catch(err){
         res.status(500).json({error:'Failed'})
     }
@@ -32,18 +38,14 @@ app.get('/', async(req,res)=>{
 
 // Connect to db
 run()
-// connect(process.env.DB_CONNECT!).then(()=>console.log("Connected to db")).catch(error => console.log(error));
- async function run(){
+async function run(){
     try{
         await connect(process.env.DB_CONNECT!)
-        console.log("connected")
+        console.log("Connected to the database")
     }catch(err){
         console.log(err)
     }
 }
-
-
-
 
 app.listen(port)
 
