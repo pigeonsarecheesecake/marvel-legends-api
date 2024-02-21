@@ -7,7 +7,7 @@ interface IActionFigure {
     series:string;
     year:string;
     manufacturer:string;
-    variant:string;
+    variant:boolean;
 }
 
 // Action figure model
@@ -18,7 +18,7 @@ const actionFigureSchema =  new Schema<IActionFigure>(
         series:{type:String, required:true},
         year:{type:String, required:true},
         manufacturer:{type:String, required:true},
-        variant:{type:String, required:true}
+        variant:{type:Boolean, required:true}
     }
 )
 
