@@ -1,7 +1,7 @@
-import {Schema, model} from "mongoose"
+import {Schema, model, Document, Model} from "mongoose"
 
-// Action figure interface
-interface IActionFigure {
+// Shape of document
+interface IActionFigure extends Document {
     name:string;
     character:string[];
     series:string;
@@ -10,7 +10,7 @@ interface IActionFigure {
     variant:boolean;
 }
 
-// Action figure model
+// Action figure schema
 const actionFigureSchema =  new Schema<IActionFigure>(
     {
         name:{type:String, required:true},
@@ -22,7 +22,60 @@ const actionFigureSchema =  new Schema<IActionFigure>(
     }
 )
 
-const actionFigureModel = model<IActionFigure>('actionfigures',actionFigureSchema)
+// Shape for the model inheriting Model
+interface IActionFigureModel extends Model<IActionFigure>{
+  search(searchTerm: string,variant:boolean): Promise<any>;
+}
+
+// Adds static method search to model
+actionFigureSchema.statics.search = function search(searchTerm,variant){
+    return this.aggregate([
+      {
+        $search:{
+          index:"actionFigureIndex",
+          compound:{
+            filter:[
+              {
+                text:{
+                  path:"name",
+                  query:searchTerm
+                }
+              },{
+                equals:{
+                  path:"variant",
+                  value:variant
+                }
+              }
+            ]
+          }
+        }
+      }
+    ])
+}
+
+const actionFigureModel = model<IActionFigure,IActionFigureModel>('actionfigures',actionFigureSchema)
 export default actionFigureModel
 
 
+// text: {
+                //   query: searchTerm,
+                //   path: "name"
+                // }
+
+                // ([
+                //   {
+                //     $search: {
+                //       index: "actionFigureIndex",
+                //       compound:{
+                //         should:[
+                //           {
+                //             text:{
+                //             path:"name",
+                //             query:searchTerm
+                //           }
+                //         }
+                //         ]
+                //       }
+                //     }
+                //   }
+                // ])
