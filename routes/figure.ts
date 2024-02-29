@@ -5,7 +5,7 @@ const router = Router()
 
 // Get figure by name
 router.get('/', async(req, res) => {
-    const {name,variant,year} = req.query
+    const {name,variant,year,character,series} = req.query
     
     // Name
     if (typeof name !== 'string' && typeof name !== 'undefined' ){
@@ -26,14 +26,20 @@ router.get('/', async(req, res) => {
     }else{
         throw new Error("Test")
     }
-    
-  
 
-    
+    // Character
+    if (typeof character !== 'string' && typeof character !== 'undefined' ){
+        throw new Error("character error")
+    }
 
+    // Series
+    if (typeof series !== 'string' && typeof series !== 'undefined' ){
+        throw new Error("character error")
+    }
+    
     // Query
     try{
-        const findFigure = await actionFigureModel.search(name,variantBoolean,year)
+        const findFigure = await actionFigureModel.search(name,variantBoolean,year,character,series)
         res.send(findFigure)
     }catch (error){
         res.status(500).json({error:'Failed'})

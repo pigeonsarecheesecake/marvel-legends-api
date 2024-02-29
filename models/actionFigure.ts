@@ -24,12 +24,17 @@ const actionFigureSchema =  new Schema<IActionFigure>(
 
 // Shape for the model inheriting Model
 interface IActionFigureModel extends Model<IActionFigure>{
-  search(searchTerm: string|undefined,variant:boolean|undefined,year:string|undefined): Promise<any>;
+  search(
+    searchTerm: string|undefined,
+    variant:boolean|undefined,
+    year:string|undefined,
+    character:string|undefined,
+    series:string|undefined): Promise<any>;
 }
 
 // Adds static method search to model
-actionFigureSchema.statics.search = function search(name,variant,year){
-  // search stage interface
+actionFigureSchema.statics.search = function search(nameQuery,variantQuery,yearQuery,characterQuery,seriesQuery){
+  // Search stage interface
   interface Search {
     $search: {
       index:string,
@@ -48,14 +53,20 @@ actionFigureSchema.statics.search = function search(name,variant,year){
     }
   }
   // Check if a variant query parameter exists
-  if(name !=undefined){
-    search.$search.compound.must.push({text:{path:"name",query:name}})
+  if(nameQuery){
+    search.$search.compound.must.push({text:{path:"name",query:nameQuery}})
   }
-  if(variant!=undefined){
-    search.$search.compound.must.push({equals:{path:"variant",value:variant}})
+  if(variantQuery){
+    search.$search.compound.must.push({equals:{path:"variant",value:variantQuery}})
   }
-  if(year!=undefined){
-    search.$search.compound.must.push({text:{path:"year",query:year}})
+  if(yearQuery){
+    search.$search.compound.must.push({text:{path:"year",query:yearQuery}})
+  }
+  if(characterQuery){
+    search.$search.compound.must.push({text:{path:"character",query:characterQuery}})
+  }
+  if(seriesQuery){
+    search.$search.compound.must.push({text:{path:"series",query:seriesQuery}})
   }
   return this.aggregate([search])
 }
