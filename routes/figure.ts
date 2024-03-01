@@ -6,7 +6,7 @@ const router = Router()
 // Get figure by name
 router.get('/', async(req, res) => {
     const {name,variant,year,character,series} = req.query
-    
+    console.log(name)
     // Name
     if (typeof name !== 'string' && typeof name !== 'undefined' ){
         throw new Error("Name must be a single string value.")

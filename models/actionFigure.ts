@@ -13,12 +13,12 @@ interface IActionFigure extends Document {
 // Action figure schema
 const actionFigureSchema =  new Schema<IActionFigure>(
     {
-        name:{type:String, required:true},
-        character:{type:[String], required:true},
-        series:{type:String, required:true},
-        year:{type:String, required:true},
-        manufacturer:{type:String, required:true},
-        variant:{type:Boolean, required:true}
+      name:{type:String, required:true},
+      character:{type:[String], required:true},
+      series:{type:String, required:true},
+      year:{type:String, required:true},
+      manufacturer:{type:String, required:true},
+      variant:{type:Boolean, required:true}
     }
 )
 
@@ -35,7 +35,7 @@ interface IActionFigureModel extends Model<IActionFigure>{
 // Adds static method search to model
 actionFigureSchema.statics.search = function search(nameQuery,variantQuery,yearQuery,characterQuery,seriesQuery){
   // Search stage interface
-  interface Search {
+  interface SearchStage {
     $search: {
       index:string,
       compound:{
@@ -44,7 +44,7 @@ actionFigureSchema.statics.search = function search(nameQuery,variantQuery,yearQ
     }
   }
   // Search stage
-  let search :Search = {
+  let searchStage :SearchStage = {
     $search:{
       index:"actionFigureIndex",
       compound:{
@@ -54,21 +54,21 @@ actionFigureSchema.statics.search = function search(nameQuery,variantQuery,yearQ
   }
   // Check if a variant query parameter exists
   if(nameQuery){
-    search.$search.compound.must.push({text:{path:"name",query:nameQuery}})
+    searchStage.$search.compound.must.push({text:{path:"name",query:nameQuery}})
   }
   if(variantQuery){
-    search.$search.compound.must.push({equals:{path:"variant",value:variantQuery}})
+    searchStage.$search.compound.must.push({equals:{path:"variant",value:variantQuery}})
   }
   if(yearQuery){
-    search.$search.compound.must.push({text:{path:"year",query:yearQuery}})
+    searchStage.$search.compound.must.push({text:{path:"year",query:yearQuery}})
   }
   if(characterQuery){
-    search.$search.compound.must.push({text:{path:"character",query:characterQuery}})
+    searchStage.$search.compound.must.push({text:{path:"character",query:characterQuery}})
   }
   if(seriesQuery){
-    search.$search.compound.must.push({text:{path:"series",query:seriesQuery}})
+    searchStage.$search.compound.must.push({text:{path:"series",query:seriesQuery}})
   }
-  return this.aggregate([search])
+  return this.aggregate([searchStage])
 }
 
 const actionFigureModel = model<IActionFigure,IActionFigureModel>('actionfigures',actionFigureSchema)
