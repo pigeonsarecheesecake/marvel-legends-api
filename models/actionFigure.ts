@@ -1,6 +1,6 @@
 import {Schema, model, Document, Model} from "mongoose"
 
-// Shape of document
+// Shape for the actionFigureSchema
 interface IActionFigure extends Document {
     name:string;
     character:string[];
@@ -22,18 +22,20 @@ const actionFigureSchema =  new Schema<IActionFigure>(
     }
 )
 
-// Shape for the model inheriting Model
+// Shape for the actionfigures model
 interface IActionFigureModel extends Model<IActionFigure>{
   search(
-    searchTerm: string|undefined,
-    variant:boolean|undefined,
-    year:string|undefined,
-    character:string|undefined,
-    series:string|undefined): Promise<any>;
+    nameQuery: string|undefined,
+    character: string|undefined,
+    series: string|undefined,
+    year: string|undefined,
+    manufacturer: string|undefined,
+    variant:boolean|undefined
+    ): Promise<any>;
 }
 
-// Adds static method search to model
-actionFigureSchema.statics.search = function search(nameQuery,variantQuery,yearQuery,characterQuery,seriesQuery){
+// Adds search static method to actionfigures model
+actionFigureSchema.statics.search = function search(nameQuery,characterQuery,seriesQuery,yearQuery,manufacturerQuery,variantQuery){
   // Search stage interface
   interface SearchStage {
     $search: {
@@ -52,15 +54,9 @@ actionFigureSchema.statics.search = function search(nameQuery,variantQuery,yearQ
       }
     }
   }
-  // Check if a variant query parameter exists
+  // Check if a variant query parameter exists, if yes adds sub-query condition to the search stage
   if(nameQuery){
     searchStage.$search.compound.must.push({text:{path:"name",query:nameQuery}})
-  }
-  if(variantQuery){
-    searchStage.$search.compound.must.push({equals:{path:"variant",value:variantQuery}})
-  }
-  if(yearQuery){
-    searchStage.$search.compound.must.push({text:{path:"year",query:yearQuery}})
   }
   if(characterQuery){
     searchStage.$search.compound.must.push({text:{path:"character",query:characterQuery}})
@@ -68,6 +64,17 @@ actionFigureSchema.statics.search = function search(nameQuery,variantQuery,yearQ
   if(seriesQuery){
     searchStage.$search.compound.must.push({text:{path:"series",query:seriesQuery}})
   }
+  if(yearQuery){
+    searchStage.$search.compound.must.push({text:{path:"year",query:yearQuery}})
+  }
+  if(manufacturerQuery){
+    searchStage.$search.compound.must.push({text:{path:"manufacturer",query:manufacturerQuery}})
+  }
+  if(variantQuery){
+    searchStage.$search.compound.must.push({equals:{path:"variant",value:variantQuery}})
+  }
+  
+  
   return this.aggregate([searchStage])
 }
 

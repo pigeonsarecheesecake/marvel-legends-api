@@ -1,45 +1,26 @@
 import {Router} from 'express'
 import actionFigureModel from '../models/actionFigure'
-import { error } from 'console'
+import Joi from 'joi'
 const router = Router()
 
 // Get figure by name
 router.get('/', async(req, res) => {
-    const {name,variant,year,character,series} = req.query
-    console.log(name)
-    // Name
-    if (typeof name !== 'string' && typeof name !== 'undefined' ){
-        throw new Error("Name must be a single string value.")
-    }
-    // Year
-    if (typeof year !== 'string' && typeof year !== 'undefined' ){
-        throw new Error("year error")
-    }
-    // Variant
-    let variantBoolean;
-    if(variant==="true"){
-        variantBoolean=true
-    }else if(variant==="false"){
-        variantBoolean=false
-    }else if(!variant){
-        variantBoolean===undefined
-    }else{
-        throw new Error("Test")
-    }
-
-    // Character
-    if (typeof character !== 'string' && typeof character !== 'undefined' ){
-        throw new Error("character error")
-    }
-
-    // Series
-    if (typeof series !== 'string' && typeof series !== 'undefined' ){
-        throw new Error("character error")
-    }
-    
+    // Query parameters schema using Joi to validate data
+    const querySchema = Joi.object(
+        {
+            name:Joi.string().optional(),
+            character:Joi.string().optional(),
+            series:Joi.string().optional(),
+            year:Joi.string().optional(),
+            manufacturer:Joi.string().optional(),
+            variant:Joi.boolean().optional()
+        }
+    )
+   
     // Query
     try{
-        const findFigure = await actionFigureModel.search(name,variantBoolean,year,character,series)
+        const parameters = await querySchema.validateAsync(req.query)
+        const findFigure = await actionFigureModel.search(parameters.name,parameters.character,parameters.series,parameters.year,parameters.manufacturer,parameters.variant)
         res.send(findFigure)
     }catch (error){
         res.status(500).json({error:'Failed'})
