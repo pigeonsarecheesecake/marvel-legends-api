@@ -15,8 +15,10 @@ async function run(){
     try{
         await connect(process.env.DB_CONNECT!)
         console.log("Connected to the database")
-    }catch(err){
-        console.log(err)
+    }catch(error:any){
+        console.error({
+            error:error.message,
+            message:"Can't connect to database"})
     }
 }
 

@@ -54,6 +54,7 @@ actionFigureSchema.statics.search = function search(nameQuery,characterQuery,ser
       }
     }
   }
+
   // Check if a variant query parameter exists, if yes adds sub-query condition to the search stage
   if(nameQuery){
     searchStage.$search.compound.must.push({text:{path:"name",query:nameQuery}})
@@ -73,7 +74,6 @@ actionFigureSchema.statics.search = function search(nameQuery,characterQuery,ser
   if(variantQuery){
     searchStage.$search.compound.must.push({equals:{path:"variant",value:variantQuery}})
   }
-  
   
   return this.aggregate([searchStage])
 }
