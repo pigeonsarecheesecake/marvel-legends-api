@@ -8,6 +8,7 @@ interface IActionFigure extends Document {
     year:string;
     manufacturer:string;
     variant:boolean;
+    exclusive?:string
 }
 
 // Action figure schema
@@ -18,7 +19,8 @@ const actionFigureSchema =  new Schema<IActionFigure>(
       series:{type:String, required:true},
       year:{type:String, required:true},
       manufacturer:{type:String, required:true},
-      variant:{type:Boolean, required:true}
+      variant:{type:Boolean, required:true},
+      exclusive:{type:String, required:false}
     }
 )
 
@@ -30,18 +32,19 @@ interface IActionFigureModel extends Model<IActionFigure>{
     series: string|undefined,
     year: string|undefined,
     manufacturer: string|undefined,
-    variant:boolean|undefined
+    variant:boolean|undefined,
+    exclusive:string|undefined
     ): Promise<any>;
 }
 
 // Adds search static method to actionfigures model
-actionFigureSchema.statics.search = function search(nameQuery,characterQuery,seriesQuery,yearQuery,manufacturerQuery,variantQuery){
+actionFigureSchema.statics.search = function search(nameQuery,characterQuery,seriesQuery,yearQuery,manufacturerQuery,variantQuery,exclusiveQuery){
   // Search stage interface
   interface SearchStage {
     $search: {
       index:string,
       compound:{
-        must:Array<{text?:object; equals?:object}>;
+        must:Array<{text?:object; equals?:object; exists?:object}>;
       }
     }
   }
@@ -73,6 +76,9 @@ actionFigureSchema.statics.search = function search(nameQuery,characterQuery,ser
   }
   if(variantQuery){
     searchStage.$search.compound.must.push({equals:{path:"variant",value:variantQuery}})
+  }
+  if(exclusiveQuery){
+    searchStage.$search.compound.must.push({text:{path:"exclusive",query:exclusiveQuery}})
   }
   
   return this.aggregate([searchStage])
