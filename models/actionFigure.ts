@@ -77,7 +77,12 @@ actionFigureSchema.statics.search = function search(nameQuery,characterQuery,ser
   if(variantQuery){
     searchStage.$search.compound.must.push({equals:{path:"variant",value:variantQuery}})
   }
-  if(exclusiveQuery){
+  // If exclusiveQuery exists and it's the string 'all', matches documents that include 'exclusive' field.
+  if(exclusiveQuery && exclusiveQuery === "all"){
+    searchStage.$search.compound.must.push({exists:{path:"exclusive"}})
+  }
+  // If exclusiveQuery exists and it's NOT the string 'all', matches documents with exclusive field that contains the query parameter as value.
+  if(exclusiveQuery && exclusiveQuery != "all"){
     searchStage.$search.compound.must.push({text:{path:"exclusive",query:exclusiveQuery}})
   }
   
