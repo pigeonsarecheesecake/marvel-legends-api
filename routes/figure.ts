@@ -21,6 +21,7 @@ router.get('/search', async(req, res) => {
             name:Joi.string().optional(),
             character:Joi.string().optional(),
             series:Joi.string().optional(),
+            part:Joi.string().optional(),
             year:Joi.string().optional(),
             manufacturer:Joi.string().optional(),
             variant:Joi.boolean().optional(),
@@ -33,7 +34,7 @@ router.get('/search', async(req, res) => {
         // Data validation
         const parameters = await querySchema.validateAsync(req.query)
         // Search static method
-        const findFigure = await actionFigureModel.search(parameters.name,parameters.character,parameters.series,parameters.year,parameters.manufacturer,parameters.variant,parameters.exclusive)
+        const findFigure = await actionFigureModel.search(parameters.name,parameters.character,parameters.series,parameters.part,parameters.year,parameters.manufacturer,parameters.variant,parameters.exclusive)
         res.json(findFigure)
     }catch(err:any){
         // res.status(500).json({ error: 'Internal Server Error', message:'Server has encountered an unexpected error.' })
