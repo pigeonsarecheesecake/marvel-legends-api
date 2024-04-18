@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/types": "^3.535.0",
+    "aws-sdk": "^2.1602.0",
     "dotenv": "^16.4.4",
     "express": "^4.18.2",
     "joi": "^17.12.2",

@@ -54,6 +54,7 @@ actionFigureSchema.statics.search = function search(nameQuery,characterQuery,ser
       }
     }
   }
+  
   // Search stage
   let searchStage :SearchStage = {
     $search:{

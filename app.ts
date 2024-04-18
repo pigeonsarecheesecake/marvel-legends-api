@@ -7,11 +7,14 @@ const app = express()
 const port = 3000
 
 app.use(cors())
-
+app.use(express.json())
 // Get figure by fields
-import figure from './routes/figure'
-app.use('/figure',figure)
+import figureRoute from './routes/figure'
+app.use('/figure',figureRoute)
 
+// Authentication
+import authenticateRoute from './routes/authenticate'
+app.use('/authenticate',authenticateRoute)
 // Connect to db
 run()
 async function run(){

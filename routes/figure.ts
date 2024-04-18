@@ -29,6 +29,7 @@ router.get('/search', async(req, res) => {
         }
     )
    
+
     // Find figure using query parameters
     try{
         // Data validation
@@ -37,8 +38,7 @@ router.get('/search', async(req, res) => {
         const findFigure = await actionFigureModel.search(parameters.name,parameters.character,parameters.series,parameters.part,parameters.year,parameters.manufacturer,parameters.variant,parameters.exclusive)
         res.json(findFigure)
     }catch(err:any){
-        // res.status(500).json({ error: 'Internal Server Error', message:'Server has encountered an unexpected error.' })
-        console.log(err.message)
+        res.json('Error: Must include at least 1 query parameter')
     }
     
 })
