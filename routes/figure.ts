@@ -1,5 +1,6 @@
 import {Router} from 'express'
 import actionFigureModel from '../models/actionFigure'
+import validator from './validation'
 import Joi from 'joi'
 const router = Router()
 
@@ -14,7 +15,7 @@ router.get('/',async(req,res)=>{
 })
 
 // Search for an action figure using query parameters
-router.get('/search', async(req, res) => {
+router.get('/search', validator, async(req, res) => {
     // Query parameters schema using Joi to validate data
     const querySchema = Joi.object(
         {

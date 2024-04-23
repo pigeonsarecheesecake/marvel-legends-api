@@ -15,6 +15,7 @@ app.use('/figure',figureRoute)
 // Authentication
 import authenticateRoute from './routes/authenticate'
 app.use('/authenticate',authenticateRoute)
+
 // Connect to db
 run()
 async function run(){
