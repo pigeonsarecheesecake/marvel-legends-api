@@ -1,15 +1,16 @@
 import {Router} from "express"
 import 'dotenv/config'
 import aws from 'aws-sdk'
-import { any } from "joi"
 
 const router = Router()
 
+// Creates a new instance of cognito identity service provider
 const cognito = new aws.CognitoIdentityServiceProvider(
     {
         region:process.env.AWS_REGION
     }
 )
+
 // Authentication Handler
 router.post('/',async(req,res)=>{
     // Retrieve the username and password from request body
@@ -28,16 +29,13 @@ router.post('/',async(req,res)=>{
     // Connect to Cognito
     try{
         const cognitoResponse = await cognito.initiateAuth(params).promise()
-        const {AccessToken} = cognitoResponse.AuthenticationResult
+        const {AccessToken} = cognitoResponse.AuthenticationResult!
         res.json({
             accessToken:AccessToken
         });
-    }catch(e){
-        
+    }catch(e:any){
+        res.json(e.message)
     }
-
-
-    res.send(params.ClientId)
 })
 
 
