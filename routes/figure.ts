@@ -1,16 +1,18 @@
-import {Router} from 'express'
+import {Router, Request, Response} from 'express'
 import actionFigureModel from '../models/actionFigure'
-import validator from './validation'
+import validator from '../middlewares/validation'
 import Joi from 'joi'
+
+// Router instance
 const router = Router()
 
-// Get all the figures
-router.get('/',async(req,res)=>{
+// GET all the figures
+router.get('/',async(req:Request,res:Response)=>{
     try{
         const allFigures = await actionFigureModel.find({})
         res.json(allFigures)
-    }catch{
-        res.status(500).json({error:'Internal Server Error', message:'Server has encountered an unexpected error.'})
+    }catch(e:any){
+        res.status(404).json(e.message)
     }
 })
 
@@ -30,7 +32,6 @@ router.get('/search', validator, async(req, res) => {
         }
     )
    
-
     // Find figure using query parameters
     try{
         // Data validation
@@ -38,10 +39,9 @@ router.get('/search', validator, async(req, res) => {
         // Search static method
         const findFigure = await actionFigureModel.search(parameters.name,parameters.character,parameters.series,parameters.part,parameters.year,parameters.manufacturer,parameters.variant,parameters.exclusive)
         res.json(findFigure)
-    }catch(err:any){
-        res.json('Error: Must include at least 1 query parameter')
-    }
-    
+    }catch(e:any){
+        res.json(e.message)
+    }  
 })
 
 export default router

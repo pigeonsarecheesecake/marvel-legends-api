@@ -2,6 +2,7 @@ import {Router} from "express"
 import 'dotenv/config'
 import aws from 'aws-sdk'
 
+// Router instance
 const router = Router()
 
 // Creates a new instance of cognito identity service provider
@@ -34,7 +35,7 @@ router.post('/',async(req,res)=>{
             accessToken:AccessToken
         });
     }catch(e:any){
-        res.json(e.message)
+        res.status(401).json(e.message)
     }
 })
 
