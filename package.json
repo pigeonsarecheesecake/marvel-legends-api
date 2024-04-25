@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/types": "^3.535.0",
     "aws-jwt-verify": "^4.0.1",
     "aws-sdk": "^2.1602.0",
     "dotenv": "^16.4.4",
